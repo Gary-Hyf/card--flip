@@ -59,6 +59,7 @@ function setGame() {
 }
 
 function startGame() {
+  game.level=1;
   var levelDisplay=document.getElementsByClassName('game-stats__level--value');
   levelDisplay[0].innerHTML="1";
   var ScoreDisplay=document.getElementsByClassName('game-stats__score--value');
@@ -68,7 +69,7 @@ function startGame() {
   var game_board=document.getElementsByClassName('game-board')
   game.timerDisplay = document.querySelector('.game-timer__bar');
   clearGameBoard();
-  creatCards(1);
+  creatCards(game.level);
  updateTimerDisplay();
   
 }
@@ -76,16 +77,19 @@ function clearGameBoard() {
   document.querySelector('.game-board').innerHTML = '';
 }
 function creatCards(level){
-  
-  set=["html5", "html5", "css3", "css3", "js", "js", "sass", "sass", "nodejs", "nodejs", "react", "react", "linkedin", "linkedin", "heroku", "heroku", "github", "github", "aws", "aws","html5", "html5", "css3", "css3", "js", "js", "sass", "sass", "nodejs", "nodejs", "react", "react"];
+  levelset=[[],["html5", "html5", "css3", "css3"],
+   ["html5", "html5", "css3", "css3","js", "js", "sass", "sass", "nodejs", "nodejs", "react", "react", "linkedin", "linkedin", "heroku", "heroku"], 
+   ["html5", "html5", "css3", "css3","js", "js", "sass", "sass", "nodejs", "nodejs", "react", "react", "linkedin", "linkedin", "heroku", "heroku","github", "github", "aws", "aws","html5", "html5", "css3", "css3", "js", "js", "sass", "sass", "nodejs", "nodejs", "react", "react"]];
+  shuffle(levelset[level]);
+  game.level=level;
   var row =level*2;
   var total_cards=row *row;
   var board=document.getElementsByClassName("game-board");
-  board[0].setAttribute("style","display:grid; grid-template-columns:auto auto");
+  board[0].setAttribute("style","display:grid; grid-template-columns:"+'1fr '.repeat(row));
   for (var i = 0; i < total_cards; i++) {
     var div_card=document.createElement("div");
-    div_card.className='card '+set[i];
-    div_card.setAttribute("data-tech",set[i]);
+    div_card.className='card '+levelset[level][i];
+    div_card.setAttribute("data-tech",levelset[level][i]);
     board[0].appendChild(div_card);
     var card_front=document.createElement("div");
     var card_back=document.createElement("div");
@@ -97,14 +101,20 @@ function creatCards(level){
   
     // cd[0].appendChild(card_front);
     // rd[0].appendChild(card_back);
-    bindCardClick()
+    bindCardClick();
   }
 
 }
 function handleCardFlip() {}
+function shuffle(arr){
+  arr.sort(function(){
+    return Math.random()-0.5;
+  })
 
+}
 
 function nextLevel() {
+  
 
 }
 
@@ -144,12 +154,15 @@ function bindStartButton() {
     if (Button == "New Game"){
       target.innerHTML="End Game";
       startGame();
+      return;
     }
     if (Button == "End Game"){
-      handleGameOver()
+      handleGameOver();
+      return;
     }
-    else (Button == "Start Game");{
+    if (Button == "Start Game");{
       startGame();
+      return;
     }
 
   })
@@ -158,6 +171,7 @@ function bindStartButton() {
 
 
 function handleCardClick(){
+var cardNumber = (game.level * 2) * (game.level * 2);
 if(game.checkMatching){
   return;
 }
@@ -184,8 +198,16 @@ game.checkMatching=false;
 },1000);
 return;
 }
+if (cardNumber === document.getElementsByClassName('card--flipped').length) {
+  game.level+=1;
+  clearGameBoard();
+  creatCards(game.level);
+  updateTimerDisplay();}
 
   game.preSelected=currentSelected;
+
+  
+
 }
 function unBindCardClick(card) {
   card.removeEventListener('click',handleCardClick);
