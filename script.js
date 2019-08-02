@@ -120,6 +120,7 @@ function nextLevel() {
 
 function handleGameOver() {
 var StartButton=document.querySelector('.game-stats__button')
+clearInterval(game.timerInterval);
 alert('your score is')
 StartButton.innerHTML="New Game";
 }
@@ -130,9 +131,16 @@ StartButton.innerHTML="New Game";
 function updateScore() {
 
 }
+function stopTimer() {
+  clearInterval(game.timerInterval);
+  game.timerInterval = null;
+}
 function updateTimerDisplay() {
+  if (game.timerInterval) {
+    stopTimer();
+  }
   game.timer=60;
-    setInterval(()=>{
+  game.timerInterval=setInterval(()=>{
     game.timer--;
     document.getElementsByClassName('game-timer__bar')[0].innerHTML=""+game.timer+"s";
     if(game.timer === 0){  
@@ -198,14 +206,15 @@ game.checkMatching=false;
 },1000);
 return;
 }
-if (cardNumber === document.getElementsByClassName('card--flipped').length) {
-  game.level+=1;
-  clearGameBoard();
-  creatCards(game.level);
-  updateTimerDisplay();}
+
 
   game.preSelected=currentSelected;
-
+  if (cardNumber === document.getElementsByClassName('card--flipped').length) {
+    game.level+=1;
+    clearGameBoard();
+    creatCards(game.level);
+    updateTimerDisplay();
+  }
   
 
 }
